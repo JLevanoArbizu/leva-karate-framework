@@ -21,16 +21,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 4. EL TRUCO DE DEVOPS: Creamos el archivo de secretos en el aire
-      # Usaremos las variables de entorno seguras (Secrets) de tu repositorio de GitHub
-      - name: Generar secrets.properties dinamicamente
-        run: |
-          mkdir -p config
-          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}" >> config/secrets.properties
-          echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}" >> config/secrets.properties
-          echo "USERNAME=${{ secrets.USERNAME }}" >> config/secrets.properties
-          echo "PASSWORD=${{ secrets.PASSWORD }}" >> config/secrets.properties
+      # 4 Eliminamos el paso de "Generar secrets dinámicamente"
 
-      # 5. Ejecutamos la prueba exactamente igual que en tu consola local
+      # 5. Ejecutamos la prueba inyectando las variables de entorno en la memoria
       - name: Ejecutar pruebas Karate
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          AZURE_USERNAME: ${{ secrets.USERNAME }}
+          AZURE_PASSWORD: ${{ secrets.PASSWORD }}
         run: mvn clean test -Dtest=KarateRunner
